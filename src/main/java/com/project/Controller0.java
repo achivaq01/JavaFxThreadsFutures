@@ -1,5 +1,6 @@
 package com.project;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javafx.application.Platform;
@@ -13,13 +14,16 @@ import javafx.scene.layout.AnchorPane;
 public class Controller0 {
 
     @FXML
-    private Button button0, button1;
+    private Button pButton1, pButton2, pButton3;
     @FXML
     private AnchorPane container;
     @FXML
-    private Label percentatge0, percentatge1;
+    private Label percentatge0, percentatge1, percentatge2;
     
-    private ExecutorService executor = Executors.newFixedThreadPool(2); // Creem una pool de dos fils
+    private ExecutorService executor0 = Executors.newFixedThreadPool(1);
+    private ExecutorService executor1 = Executors.newFixedThreadPool(1);
+    private ExecutorService executor2 = Executors.newFixedThreadPool(1);
+
 
     @FXML
     private void animateToView1(ActionEvent event) {
@@ -27,13 +31,23 @@ public class Controller0 {
     }
 
     @FXML
-    private void runTask() {
+    private void runTask0() {
 
-        backgroundTask(0);
-        backgroundTask(1);
+        backgroundTask(0, executor0, percentatge0);
+        //backgroundTask(1, executor0, percentatge0);
+    }
+    @FXML
+    private void runTask1() {
+        backgroundTask(0, executor1, percentatge1);
+        //backgroundTask(1, executor1, percentatge1);
+    }
+    @FXML
+    private void runTask2(){
+        backgroundTask(0, executor2, percentatge2);
+        //backgroundTask(1, executor2, percentatge2);
     }
 
-    private void backgroundTask(int index) {
+    private void backgroundTask(int index, ExecutorService executor, Label label) {
         // Executar la tasca
         executor.submit(() -> {
             try {
@@ -43,16 +57,16 @@ public class Controller0 {
                     if (index == 0) {
                         // Actualitzar el Label en el fil d'aplicació de l'UI
                         Platform.runLater(() -> {
-                            percentatge0.setText(String.valueOf(currentValue) + "%");
+                            label.setText(String.valueOf(currentValue) + "%");
                         });
-                        Thread.sleep(20);
+                        Thread.sleep(100);
 
                     }
 
                     if (index == 1) {
                         // Actualitzar el Label en el fil d'aplicació de l'UI
                         Platform.runLater(() -> {
-                            percentatge1.setText(String.valueOf(currentValue) + "%");
+                            label.setText(String.valueOf(currentValue) + "%");
                         });
                         Thread.sleep(40);
                     }
@@ -66,7 +80,7 @@ public class Controller0 {
     }
     
     // Aquesta funció la cridaries quan vulguis tancar l'executor (per exemple, quan tanquis la teva aplicació)
-    public void stopExecutor() {
+    public void stopExecutor(ExecutorService executor) {
         executor.shutdown();
     }
 
