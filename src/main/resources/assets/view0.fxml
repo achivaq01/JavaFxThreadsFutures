@@ -27,8 +27,8 @@
       <ProgressBar fx:id="pBar1" layoutX="117.0" layoutY="145.0" prefHeight="39.0" prefWidth="351.0" progress="0.0" />
       <ProgressBar fx:id="pBar2" layoutX="117.0" layoutY="255.0" prefHeight="39.0" prefWidth="351.0" progress="0.0" />
       <ProgressBar fx:id="pBar3" layoutX="117.0" layoutY="362.0" prefHeight="39.0" prefWidth="351.0" progress="0.0" />
-      <Label fx:id="percentatge0" layoutX="117.0" layoutY="109.0" prefHeight="30.0" prefWidth="70.0" text="Tasca 1" />
-      <Label fx:id="percentatge1" layoutX="117.0" layoutY="219.0" prefHeight="30.0" prefWidth="70.0" text="Tasca 2" />
-      <Label fx:id="percentatge2" layoutX="117.0" layoutY="325.0" prefHeight="30.0" prefWidth="70.0" text="Tasca 3" />
+      <Label fx:id="percentatge0" layoutX="117.0" layoutY="109.0" prefHeight="30.0" prefWidth="135.0" text="Tasca 1" />
+      <Label fx:id="percentatge1" layoutX="117.0" layoutY="219.0" prefHeight="30.0" prefWidth="135.0" text="Tasca 2" />
+      <Label fx:id="percentatge2" layoutX="117.0" layoutY="325.0" prefHeight="30.0" prefWidth="135.0" text="Tasca 3" />
    </children>
 </AnchorPane>
