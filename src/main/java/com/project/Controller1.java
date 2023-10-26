@@ -1,31 +1,38 @@
 package com.project;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
-public class Controller1 implements initialize {
+public class Controller1 implements Initializable {
 
     @FXML
-    private Button button0, button1;
+    private ImageView img1;
+    // Add more ImageView declarations for img2, img3, ..., img24
+
+    private List<Integer> loadedImageIndices;
+
     @FXML
-    private ImageView img;
-    @FXML
-    private AnchorPane container;
+    private ProgressBar pBar;
     @FXML
     private Label loading;
 
-    @FXML
-    public void initialize() {
-        loading.setVisible(false);
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        loadedImageIndices = new ArrayList<>();
     }
 
     @FXML
@@ -35,39 +42,62 @@ public class Controller1 implements initialize {
 
     @FXML
     private void loadImage() {
-        System.out.println("Loading image...");
+        System.out.println("Loading images...");
         loading.setVisible(true);
-        img.setImage(null);
-        loadImageBackground((image) -> {
-            System.out.println("Image loaded");
-            img.setImage(image);
-            loading.setVisible(false);
-        });
-    }
+        pBar.setProgress(0);
 
-    public void loadImageBackground(Consumer<Image> callBack) {
-        // Use a thread to avoid blocking the UI
-        CompletableFuture<Image> futureImage = CompletableFuture.supplyAsync(() -> {
-            try {
-                // Wait a second to simulate a long loading time
-                Thread.sleep(1000);
+        Task<Void> loadingTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                LoadImage loadImage = new LoadImage();
+                Random random = new Random();
+                int numberOfImages = 24;
 
-                // Load the data from the assets file
-                Image image = new Image(getClass().getResource("/assets/image.png").toString());
-                return image;
+                while (loadedImageIndices.size() < numberOfImages && !isCancelled()) {
+                    try {
+                        int loadingTime = (random.nextInt(10) + 1) * 500;
+                        Thread.sleep(loadingTime);
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/assets/image.png")));
+
+                        int randomIndex;
+                        do {
+                            randomIndex = random.nextInt(numberOfImages) + 1;
+                        } while (loadedImageIndices.contains(randomIndex));
+
+                        loadedImageIndices.add(randomIndex);
+                        updateProgress(loadedImageIndices.size(), numberOfImages);
+
+                        int finalRandomIndex = randomIndex;
+                        Platform.runLater(() -> displayImage(image, finalRandomIndex));
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                }
                 return null;
             }
-        })
-        .exceptionally(ex -> {
-            ex.printStackTrace();
-            return null;
-        });
+        };
 
-        futureImage.thenAcceptAsync(result -> {
-            callBack.accept(result);
-        }, Platform::runLater);
+        loadingTask.setOnSucceeded(event -> loading.setVisible(false));
+
+        Thread loadingThread = new Thread(loadingTask);
+        loadingThread.setDaemon(true);
+        loadingThread.start();
+    }
+
+    private void displayImage(Image image, int index) {
+        // Depending on the index, set the corresponding ImageView with the loaded image
+        switch (index) {
+            case 1:
+                img1.setImage(image);
+                break;
+            // Add more cases for img2, img3, ..., img24
+        }
+    }
+    @FXML
+    private void stopLoading(){
+
     }
 }
